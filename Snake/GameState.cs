@@ -94,7 +94,7 @@ namespace Snake
             snakePosition.RemoveLast();
         }
 
-        private void ChangeDirection(Direction dir)
+        public void ChangeDirection(Direction dir)
         {
             Dir = dir;
         }
