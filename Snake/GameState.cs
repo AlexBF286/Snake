@@ -87,7 +87,7 @@ namespace Snake
             Grid[pos.Row, pos.Col] = GridValue.Snake;
         }
 
-        private void RemoveTail(Position pos)
+        private void RemoveTail()
         {
             Position tail = snakePosition.Last.Value;
             Grid[tail.Row, tail.Col] = GridValue.Empty;
@@ -97,6 +97,48 @@ namespace Snake
         private void ChangeDirection(Direction dir)
         {
             Dir = dir;
+        }
+
+        private bool OutsideGrid(Position pos)
+        {
+            return pos.Row < 0 || pos.Row >= Rows || pos.Col < 0 || pos.Col >= Cols;
+        }
+        //Metodo por si la cabeza choca con el cuerpo o cola
+        private GridValue WillHit(Position newHeadPos)
+        {
+            if(OutsideGrid(newHeadPos))
+            {
+                return GridValue.Outside;
+            }
+
+            if(newHeadPos == TailPosition())
+            {
+                return GridValue.Empty;
+            }
+
+            return Grid[newHeadPos.Row, newHeadPos.Col];
+        }
+        //Metodo para que se pueda mover y que la cola se corte una y la cabeza avance
+        public void Move()
+        {
+            Position newHeadPos = HeadPosition().Translate(Dir);
+            GridValue hit = WillHit(newHeadPos);
+
+            if(hit == GridValue.Outside || hit == GridValue.Snake)
+            {
+                GameOver = true;
+            }
+            else if (hit == GridValue.Empty)
+            {
+                RemoveTail();
+                AddHead(newHeadPos);
+            }
+            else if(hit == GridValue.Food)
+            {
+                AddHead(newHeadPos);
+                Score++;
+                AddFood();
+            }
         }
     }
 }
